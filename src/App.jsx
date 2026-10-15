@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 
 function App() {
@@ -5,41 +6,30 @@ function App() {
   const [columns, setColumns] = useState([]);
 
   const handleSubmit = () => {
-    if (!selected) {
-      return;
-    }
+    if (selected === "") return;
 
-    setColumns((prev) => {
-      const updated = [...prev];
-      if (updated.length === 0) {
-        return [{ type: selected, count: 1 }];
-      }
-      console.log("this is update",updated);
+    setColumns((prevColumns) => {
+      const lastColumn = prevColumns[prevColumns.length - 1];
 
-      const lastColumn = updated[updated.length - 1];
-      if (lastColumn.type === selected) {
-        updated[updated.length - 1] = {
-          ...lastColumn,
-          count: lastColumn.count + 1,
-        };
-      } else {
-        updated.push({
-          type: selected,
-          count: 1,
-        });
+      if (!lastColumn || lastColumn.type !== selected) {
+        return [
+          ...prevColumns,
+          { type: selected, count: 1 },
+        ];
       }
 
-      return updated;
+      return [
+        ...prevColumns.slice(0, -1),
+        { ...lastColumn, count: lastColumn.count + 1 },
+      ];
     });
   };
 
   return (
     <div>
-
       <select
         value={selected}
         onChange={(e) => setSelected(e.target.value)}
-
       >
         <option value="">Select Option</option>
         <option value="Head">Head</option>
@@ -68,7 +58,7 @@ function App() {
           >
             <h4>Column {index + 1}</h4>
 
-            {Array.from({ length: column.count }).map((_, i) => (
+            {Array.from({ length: column.count }, (_, i) => (
               <p key={i}>{column.type}</p>
             ))}
           </div>
@@ -79,4 +69,5 @@ function App() {
 }
 
 export default App;
+
 
